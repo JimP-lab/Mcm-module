@@ -7,7 +7,7 @@ CREATE TABLE tblads_MCMVerification (
     FOREIGN KEY (MCMVendorID) REFERENCES tblads_MCMVendor(ID)
 );
 
--- CREATE TABLE tblads_MCMStatus (
---     ID INT AUTO_INCREMENT PRIMARY KEY,
---     StatusName VARCHAR(255) NOT NULL
--- );
+CREATE TABLE tblads_MCMStatus (
+    ID INT AUTO_INCREMENT PRIMARY KEY,
+    StatusName VARCHAR(255) NOT NULL
+);
