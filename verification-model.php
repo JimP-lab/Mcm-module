@@ -14,6 +14,7 @@ class MCMVerification_model extends CI_Model {
     }
 
     public function insert_verification($data) {
+        $this->db->from('tblads_MCMVendor', $data);
         return $this->db->insert('tblads_MCMVerification', $data);
     }
 
