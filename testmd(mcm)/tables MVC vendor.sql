@@ -1,7 +1,0 @@
-CREATE TABLE tblads_MCMVendor (
-    ID INT AUTO_INCREMENT PRIMARY KEY,
-    VendorName VARCHAR(255) NOT NULL,
-    Domain VARCHAR(255) NOT NULL,
-    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-// xamp add this 
