@@ -1,2 +1,2 @@
-Mcm is managing and tracking system for storing clients and vendors 
-Mcm was made in php,html,in codeingiter 3 in the mcv framework.
+Mcm is a managmemnt and tracking system that manages and stores vendors and authors.
+Mcm is made by php and html and is based on the framework of perfex crm and codeigniter 3.
