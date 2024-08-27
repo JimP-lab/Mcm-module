@@ -71,13 +71,11 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
-        <h4 class="modal-title" id="edit-vendor-modal-title">Edit Vendor</h4>
+        <h4 class="modal-title" id="edit-vendor-modal-title">Edit Information</h4>
       </div>
       <div class="modal-body">
         <form id="edit-vendor-form">
           <input type="hidden" id="id" name="id">
-          <!-- Add CSRF token hidden field -->
-          <input type="hidden" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>">
 
           <label for="Date" class="form-label required">Date</label>
           <input type="text" id="Date" name="Date" class="form-control required-field">
@@ -97,7 +95,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="submit" form="edit-vendor-form" class="btn btn-primary" style="margin-top: 15px;">Save</button>  
+        <button type="submit" form="edit-vendor-form" class="btn btn-primary" id="save-btn" style="margin-top: 15px;">Save</button>  
       </div>
     </div>
   </div>
@@ -212,15 +210,8 @@
         </div>
     </div>
 </div>
-
 <script>
 $(document).ready(function() {
-     // Set up CSRF token in AJAX headers
-     $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-    });
     // Show Import Modal
     $('#import-mcm-btn').on('click', function() {
         $('#import-mcm-vendors-modal').modal('show');
@@ -283,9 +274,8 @@ $(document).ready(function() {
             });
         }
     });
-
-    // Show Vendors List Table
-    $('#show-mcm-btn').on('click', function() {
+     // Show Vendors List Table
+     $('#show-mcm-btn').on('click', function() {
         const directEndpoint = `${admin_url}mcm/get_mcm_vendors`;
         let directColumns = [
             {
@@ -355,81 +345,110 @@ $(document).ready(function() {
         // Toggle table visibility
         $('#vendors-table-container').toggle();
     });
-    // Show Vendors List 
 
-    // Show edit modal 
+    $(document).ready(function() {
+    // Handle edit button click
     $(document).on('click', '.edit-vendor-btn', function() {
         var id = $(this).data('id'); // Get the ID from the data attribute
-
+        
         $.ajax({
-            url: `${admin_url}mcm/getData/${id}`,
+            url: `${admin_url}mcm/getData/${id}`, // Adjust URL as needed
             type: 'GET',
             dataType: 'json',
             success: function(response) {
-                console.log(response);
                 if (response.error) {
                     alert(response.error);
                 } else {
                     // Populate the form with the retrieved data
-                    $('#edit-vendor-form #id').val(response.id);
-                    $('#edit-vendor-form input[name="Name"]').val(response.Name);
-                    $('#edit-vendor-form input[name="Email"]').val(response.Email);
-                    $('#edit-vendor-form input[name="Website"]').val(response.Website);
-                    $('#edit-vendor-form input[name="GoogleAdManagerID"]').val(response.GoogleAdManagerID);
-                    $('#edit-vendor-form input[name="Date"]').val(response.Date);
+                    $('#id').val(response.id);
+                    $('#Date').val(response.Date);
+                    $('#GoogleAdManagerID').val(response.GoogleAdManagerID);
+                    $('#Name').val(response.Name);
+                    $('#Email').val(response.Email);
+                    $('#Website').val(response.Website);
 
                     // Show the modal
                     $('#edit-vendor-modal').modal('show');
                 }
             },
             error: function(xhr, status, error) {
-                console.error(xhr.responseText);
+                console.error('AJAX Error:', status, error);
+                console.log('Server Response:', xhr.responseText);
+
+                // Display error message
+                alert('An error occurred while retrieving the data. Please try again.');
             }
         });
     });
-    // Handle form submission
-    // Handle form submission
-$('#edit-vendor-form').on('submit', function(e) {
-    e.preventDefault(); // Prevent the form from submitting normally
 
-    var id = $('#edit-vendor-form #id').val();
+    // Handle form submission
+    $('#edit-vendor-form').on('submit', function(e) {
+        e.preventDefault(); // Prevent default form submission
 
-    $.ajax({
-        url: `${admin_url}mcm/update`, // Updated endpoint
-        type: 'POST',
-        data: $('#edit-vendor-form')
-        dataType: 'json',
-        success: function(response) {
-            if (response.error) {
-                alert(response.error); // Display an error message if there's an issue
-            } else {
-                alert('Vendor updated successfully.'); // Show a success message
-                $('#edit-vendor-modal').modal('hide'); // Hide the modal
-                $('#vendors-data-datatable').DataTable().ajax.reload(); // Reload the DataTable to reflect changes
-            }
-        },
-        error: function(xhr, status, error) {
-            console.error(xhr.responseText); // Log any errors to the console for debugging
+        var Id = $('#id').val();
+        var Date = $('#Date').val();
+        var GoogleAdManagerID = $('#GoogleAdManagerID').val();
+        var Name = $('#Name').val();
+        var Email = $('#Email').val();
+        var Website = $('#Website').val();
+
+        // Validate form fields if necessary
+        if (Name === '' || Email === '' || Website === '') {
+            alert('Please fill in all required fields.');
+            return;
         }
+
+        // Send AJAX request to update the record
+        $.ajax({
+            url: `${admin_url}mcm/update`, // Adjust URL as needed
+            type: 'POST',
+            data: {
+                id: Id,
+                Date: Date,
+                GoogleAdManagerID: GoogleAdManagerID,
+                Name: Name,
+                Email: Email,
+                Website: Website
+            },
+            dataType: 'json',
+            success: function(response) {
+                if (response.success) {
+                    // Display success message
+                    alert('Information updated successfully.');
+
+                    // Hide the modal
+                    $('#edit-vendor-modal').modal('hide');
+
+                    // Optionally reload the DataTable or update the UI
+                    $('#vendors-data-datatable').DataTable().ajax.reload();
+                } else {
+                    // Display error message
+                    alert('Error: ' + (response.message || 'Failed to update information.'));
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX Error:', status, error);
+                console.log('Server Response:', xhr.responseText);
+
+                // Display error message
+                alert('An error occurred while updating information. Please try again.');
+            }
+        });
     });
 });
-    // Show edit modal 
 
-    // Show delete modal 
+
+    // Show delete modal
     $(document).on('click', '.delete-vendor-btn', function() {
-        var id = $(this).data('id'); // Get the ID from the data attribute
-        var name = $(this).data('name'); // Get the name from the data attribute
-
-        // Set the vendor name in the modal
+        var id = $(this).data('id');
+        var name = $(this).data('name');
         $('#delete-vendor-message').text(`Do you want to delete vendor ${name}?`);
         $('#delete-vendor-modal #delete-vendor-id').val(id);
-        $('#delete-vendor-modal').modal('show'); // Show the modal
+        $('#delete-vendor-modal').modal('show');
     });
 
-    // Handle delete confirmation
     $('#confirm-delete-vendor').on('click', function() {
         var id = $('#delete-vendor-modal #delete-vendor-id').val();
-
         $.ajax({
             url: `${admin_url}mcm/delete/${id}`,
             type: 'POST',
@@ -439,8 +458,8 @@ $('#edit-vendor-form').on('submit', function(e) {
                     alert(response.error);
                 } else {
                     alert('Vendor deleted successfully.');
-                    $('#delete-vendor-modal').modal('hide'); // Hide the modal
-                    $('#vendors-data-datatable').DataTable().ajax.reload(); // Reload the DataTable
+                    $('#delete-vendor-modal').modal('hide');
+                    $('#vendors-data-datatable').DataTable().ajax.reload();
                 }
             },
             error: function(xhr, status, error) {
@@ -448,105 +467,78 @@ $('#edit-vendor-form').on('submit', function(e) {
             }
         });
     });
-    // Show delete modal 
 
-// Show DemandPartners Modal
-$(document).on('click', '.DemandPartners-btn', function() {
-    var Id = $(this).data('id');
-    $('#id').val(Id);
-
-    // Fetch demand partners from the database
-    $.ajax({
-        url: `${admin_url}mcm/get_demand`, // Adjust URL to your backend API endpoint
-        type: 'POST',
-        data: { id: Id },
-        dataType: 'json',
-        success: function(response) {
-            if (response.error) {
-                alert(response.error);
-            } else {
-                var dbDemandPartners = response.DemandPartners;
-
-                // Load the saved demand partners from localStorage if available
-                var localDemandPartners = localStorage.getItem('DemandPartners_' + Id);
-                var DemandPartnersToSet = localDemandPartners || dbDemandPartners;
-
-                $('#DemandPartners').val(DemandPartnersToSet);
-                $('#DemandPartners-modal').modal('show');
+    // Show DemandPartners Modal
+    $(document).on('click', '.DemandPartners-btn', function() {
+        var Id = $(this).data('id');
+        $('#id').val(Id);
+        $.ajax({
+            url: `${admin_url}mcm/get_demand`,
+            type: 'POST',
+            data: { id: Id },
+            dataType: 'json',
+            success: function(response) {
+                if (response.error) {
+                    alert(response.error);
+                } else {
+                    var dbDemandPartners = response.DemandPartners;
+                    var localDemandPartners = localStorage.getItem('DemandPartners_' + Id);
+                    var DemandPartnersToSet = localDemandPartners || dbDemandPartners;
+                    $('#DemandPartners').val(DemandPartnersToSet);
+                    $('#DemandPartners-modal').modal('show');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error(xhr.responseText);
             }
-        },
-        error: function(xhr, status, error) {
-            console.error(xhr.responseText);
-        }
+        });
     });
-});
-// Handle DemandPartners Save Button Click
-$('#DemandPartners-save-btn').on('click', function() {
-    var Id = $('#id').val();
-    var DemandPartners = $('#DemandPartners').val();
-
-    if (DemandPartners === '') {
-        alert('Please select a DemandPartner.');
-        return;
-    }
-
-    // Save the demand partners to the database
-     $.ajax({
-        url: `${admin_url}mcm/update_partners`, // Adjust URL as needed
-        type: 'POST',
-        data: {
-            id: Id,
-            DemandPartners: DemandPartners,
-        },
-        dataType: 'json',
-        success: function(response) {
-            if (response.success) {
-                // Save the selected demand partners to localStorage
-                localStorage.setItem('DemandPartners_' + Id, DemandPartners);
-
-                // Display success message
-                alert('DemandPartners updated successfully.');
-                $('#DemandPartners-modal').modal('hide'); // Hide the modal
-                $('#vendors-data-datatable').DataTable().ajax.reload(); // Reload the DataTable
-            } else {
-                // Display error message
-                alert('Error: ' + (response.message || 'Failed to update DemandPartners.'));
+    $('#DemandPartners-save-btn').on('click', function() {
+        var Id = $('#id').val();
+        var DemandPartners = $('#DemandPartners').val();
+        if (DemandPartners === '') {
+            alert('Please select a DemandPartner.');
+            return;
+        }
+        $.ajax({
+            url: `${admin_url}mcm/update_partners`,
+            type: 'POST',
+            data: { id: Id, DemandPartners: DemandPartners },
+            dataType: 'json',
+            success: function(response) {
+                if (response.success) {
+                    localStorage.setItem('DemandPartners_' + Id, DemandPartners);
+                    alert('DemandPartners updated successfully.');
+                    $('#DemandPartners-modal').modal('hide');
+                    $('#vendors-data-datatable').DataTable().ajax.reload();
+                } else {
+                    alert('Error: ' + (response.message || 'Failed to update DemandPartners.'));
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX Error:', status, error);
+                console.log('Server Response:', xhr.responseText);
+                alert('An error occurred while updating DemandPartners. Please try again.');
             }
-        },
-        error: function(xhr, status, error) {
-            console.error('AJAX Error:', status, error);
-            console.log('Server Response:', xhr.responseText);
-            
-            // Display error message
-            alert('An error occurred while updating DemandPartners. Please try again.');
-        }
+        });
     });
-});
-// Show DemandPartners Modal
 
     // Show Status Modal
     $(document).on('click', '.status-btn', function() {
         var Id = $(this).data('id');
         $('#status-id').val(Id);
-
-        // Fetch status from the database
         $.ajax({
-            url: `${admin_url}mcm/get_status`, // Adjust URL to your backend API endpoint
+            url: `${admin_url}mcm/get_status`,
             type: 'POST',
-            data: {
-                id: Id
-            },
+            data: { id: Id },
             dataType: 'json',
             success: function(response) {
                 if (response.error) {
                     alert(response.error);
                 } else {
                     var dbStatus = response.status;
-
-                    // Load the saved status from localStorage if available
                     var localStatus = localStorage.getItem('status_' + Id);
                     var statusToSet = localStatus || dbStatus;
-
                     $('#status').val(statusToSet);
                     $('#status-modal').modal('show');
                 }
@@ -557,45 +549,36 @@ $('#DemandPartners-save-btn').on('click', function() {
         });
     });
 
-    // Handle Status Save Button Click
     $('#status-save-btn').on('click', function() {
         var Id = $('#status-id').val();
         var status = $('#status').val();
-
         if (status === '') {
             alert('Please select a status.');
             return;
         }
-
-        // Save the status to the database
         $.ajax({
-            url: `${admin_url}mcm/update_status`, // Adjust URL as needed
+            url: `${admin_url}mcm/update_status`,
             type: 'POST',
-            data: {
-                id: Id,
-                status: status
-            },
+            data: { id: Id, status: status },
             dataType: 'json',
             success: function(response) {
-                if (response.error) {
-                    alert(response.error);
-                } else {
-                    // Save the selected status to localStorage
+                if (response.success) {
                     localStorage.setItem('status_' + Id, status);
-
                     alert('Status updated successfully.');
-                    $('#status-modal').modal('hide'); // Hide the modal
-                    $('#vendors-data-datatable').DataTable().ajax.reload(); // Reload the DataTable
+                    $('#status-modal').modal('hide');
+                    $('#vendors-data-datatable').DataTable().ajax.reload();
+                } else {
+                    alert('Error: ' + (response.message || 'Failed to update status.'));
                 }
             },
             error: function(xhr, status, error) {
-                console.error(xhr.responseText);
+                console.error('AJAX Error:', status, error);
+                console.log('Server Response:', xhr.responseText);
+                alert('An error occurred while updating status. Please try again.');
             }
         });
     });
 });
-// Show Status Modal
-
 // Show Website Modal
 $(document).on('click', '.Website-btn', function() {
     var Id = $(this).data('id');
@@ -670,4 +653,3 @@ $('#Website-btn').on('click', function() {
     });
 });
 </script>
-
