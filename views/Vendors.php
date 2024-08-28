@@ -152,6 +152,53 @@
   </div>
 </div>
 
+<div class="modal fade" id="edit-ads-txt-modal" tabindex="-1" aria-labelledby="editAdsTxtModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="editAdsTxtModalLabel">Insert entries for Ads.txt</h1>
+            </div>
+            <div class="modal-body">
+                <div id="edit-unique-Ads-txt-form" class="cleon-form">
+                    <input type="hidden" name="csrf_token_name" value="<?php echo $this->security->get_csrf_hash(); ?>"> </input>
+                    <input type="hidden" name="siteID" id="site-id" value=""> </input>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="separator-with-name">
+                                <hr />
+                                <span class="separator-name required">Unique Settings</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <textarea id="uniqueSettings" class="required-field full-width" name="uniqueSettings" class="full-width" rows="30"></textarea>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="separator-with-name">
+                                <hr />
+                                <span class="separator-name">Global Settings</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <textarea id="globalSettings" name="globalSettings" class="full-width" rows="30" readonly></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="save_unique_ads_txt_btn" name="save_ads_txt" class="btn btn-primary">Save</button>
+                    <button type="button" id="get_ads_txt" name="get_ads_txt" class="btn btn-primary">Get Ads.TXT</button>
+                    <button type="button" id="close_ads_txt_modal" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- DemandPartners Modal -->
 <div class="modal fade" id="DemandPartners-modal" tabindex="-1" role="dialog" aria-labelledby="DemandPartners-modal-title" aria-hidden="true" style="z-index: 100001;">
     <div class="modal-dialog" role="document">
@@ -350,88 +397,104 @@ $(document).ready(function() {
     // Handle edit button click
     $(document).on('click', '.edit-vendor-btn', function() {
         var id = $(this).data('id'); // Get the ID from the data attribute
-        
-        $.ajax({
-            url: `${admin_url}mcm/getData/${id}`, // Adjust URL as needed
-            type: 'GET',
-            dataType: 'json',
-            success: function(response) {
-                if (response.error) {
-                    alert(response.error);
-                } else {
-                    // Populate the form with the retrieved data
-                    $('#id').val(response.id);
-                    $('#Date').val(response.Date);
-                    $('#GoogleAdManagerID').val(response.GoogleAdManagerID);
-                    $('#Name').val(response.Name);
-                    $('#Email').val(response.Email);
-                    $('#Website').val(response.Website);
+    
+    $('#id').val(id); // Set the ID in the hidden input field
+    
+    $.ajax({
+        url: `${admin_url}mcm/getData/${id}`, // Adjust URL as needed
+        type: 'GET',
+        dataType: 'json',
+        success: function(response) {
+            if (response.error) {
+                alert(response.error);
+            } else {
+                // Populate the form with the retrieved data
+                var dbVendorData = response; // Get data from the server
+                var localVendorData = localStorage.getItem('VendorData_' + id); // Get data from localStorage
+                var vendorDataToSet = localVendorData ? JSON.parse(localVendorData) : dbVendorData; // Use localStorage data if available
 
-                    // Show the modal
-                    $('#edit-vendor-modal').modal('show');
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error('AJAX Error:', status, error);
-                console.log('Server Response:', xhr.responseText);
+                // Populate the form fields
+                $('#Date').val(vendorDataToSet.Date);
+                $('#GoogleAdManagerID').val(vendorDataToSet.GoogleAdManagerID);
+                $('#Name').val(vendorDataToSet.Name);
+                $('#Email').val(vendorDataToSet.Email);
+                $('#Website').val(vendorDataToSet.Website);
 
-                // Display error message
-                alert('An error occurred while retrieving the data. Please try again.');
+                // Show the modal
+                $('#edit-vendor-modal').modal('show');
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('AJAX Error:', status, error);
+            console.log('Server Response:', xhr.responseText);
+
+            // Display error message
+            alert('An error occurred while retrieving the data. Please try again.');
             }
         });
     });
 
     // Handle form submission
     $('#edit-vendor-form').on('submit', function(e) {
-        e.preventDefault(); // Prevent default form submission
+    e.preventDefault(); // Prevent default form submission
 
-        var Id = $('#id').val();
-        var Date = $('#Date').val();
-        var GoogleAdManagerID = $('#GoogleAdManagerID').val();
-        var Name = $('#Name').val();
-        var Email = $('#Email').val();
-        var Website = $('#Website').val();
+    var Id = $('#id').val();
+    var Date = $('#Date').val();
+    var GoogleAdManagerID = $('#GoogleAdManagerID').val();
+    var Name = $('#Name').val();
+    var Email = $('#Email').val();
+    var Website = $('#Website').val();
 
-        // Validate form fields if necessary
-        if (Name === '' || Email === '' || Website === '') {
-            alert('Please fill in all required fields.');
-            return;
-        }
+    // Validate form fields if necessary
+    if (Name === '' || Email === '' || Website === '') {
+        alert('Please fill in all required fields.');
+        return;
+    }
 
         // Send AJAX request to update the record
         $.ajax({
-            url: `${admin_url}mcm/update`, // Adjust URL as needed
-            type: 'POST',
-            data: {
-                id: Id,
-                Date: Date,
-                GoogleAdManagerID: GoogleAdManagerID,
-                Name: Name,
-                Email: Email,
-                Website: Website
-            },
-            dataType: 'json',
-            success: function(response) {
-                if (response.success) {
-                    // Display success message
-                    alert('Information updated successfully.');
+        url: `${admin_url}mcm/update`, // Adjust URL as needed
+        type: 'POST',
+        data: {
+            id: Id,
+            Date: Date,
+            GoogleAdManagerID: GoogleAdManagerID,
+            Name: Name,
+            Email: Email,
+            Website: Website
+        },
+        dataType: 'json',
+        success: function(response) {
+            if (response.success) {
+                // Save the updated data to localStorage
+                var updatedVendorData = {
+                    Date: Date,
+                    GoogleAdManagerID: GoogleAdManagerID,
+                    Name: Name,
+                    Email: Email,
+                    Website: Website
+                };
+                localStorage.setItem('VendorData_' + Id, JSON.stringify(updatedVendorData));
 
-                    // Hide the modal
-                    $('#edit-vendor-modal').modal('hide');
+                // Display success message
+                alert('Information updated successfully.');
 
-                    // Optionally reload the DataTable or update the UI
-                    $('#vendors-data-datatable').DataTable().ajax.reload();
-                } else {
-                    // Display error message
-                    alert('Error: ' + (response.message || 'Failed to update information.'));
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error('AJAX Error:', status, error);
-                console.log('Server Response:', xhr.responseText);
+                // Hide the modal
+                $('#edit-vendor-modal').modal('hide');
 
+                // Optionally reload the DataTable or update the UI
+                $('#vendors-data-datatable').DataTable().ajax.reload();
+            } else {
                 // Display error message
-                alert('An error occurred while updating information. Please try again.');
+                alert('Error: ' + (response.message || 'Failed to update information.'));
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('AJAX Error:', status, error);
+            console.log('Server Response:', xhr.responseText);
+
+            // Display error message
+            alert('An error occurred while updating information. Please try again.');
             }
         });
     });
