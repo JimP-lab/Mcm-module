@@ -1,4 +1,3 @@
-
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 class Mcm extends AdminController
@@ -257,8 +256,4 @@ class Mcm extends AdminController
         }
     }
 }
-
-
-
-
-    
+?>
