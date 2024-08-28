@@ -124,7 +124,5 @@ class Mcm_model extends App_Model
         $this->db->where('id', $id);
         return $this->db->update('ads_MCMVendor', ['Website' => $site]);
     }
-
 }
-
-
+?>
