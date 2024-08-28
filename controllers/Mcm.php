@@ -106,6 +106,7 @@ class Mcm extends AdminController
         }
     }
 
+
     // // Method for updating vendor
     public function update() {
         // Get the input data from the AJAX request
