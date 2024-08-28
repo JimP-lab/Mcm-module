@@ -32,3 +32,4 @@ function mcm_module_init_menu_items() {
         ]);
     }
 }
+?>
