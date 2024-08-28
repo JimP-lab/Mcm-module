@@ -112,7 +112,7 @@
         <h4 class="modal-title" id="delete-vendor-modal-title">Delete Vendor</h4>
       </div>
       <div class="modal-body">
-        <p id="delete-vendor-message">Do you want to delete this vendor?</p>
+        <p id="delete-vendor-message">Do you want to delete this ?</p>
         <input type="hidden" id="delete-vendor-id">
       </div>
       <div class="modal-footer">
@@ -150,53 +150,6 @@
       </div>
     </div>
   </div>
-</div>
-
-<div class="modal fade" id="edit-ads-txt-modal" tabindex="-1" aria-labelledby="editAdsTxtModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="editAdsTxtModalLabel">Insert entries for Ads.txt</h1>
-            </div>
-            <div class="modal-body">
-                <div id="edit-unique-Ads-txt-form" class="cleon-form">
-                    <input type="hidden" name="csrf_token_name" value="<?php echo $this->security->get_csrf_hash(); ?>"> </input>
-                    <input type="hidden" name="siteID" id="site-id" value=""> </input>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="separator-with-name">
-                                <hr />
-                                <span class="separator-name required">Unique Settings</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <textarea id="uniqueSettings" class="required-field full-width" name="uniqueSettings" class="full-width" rows="30"></textarea>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="separator-with-name">
-                                <hr />
-                                <span class="separator-name">Global Settings</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <textarea id="globalSettings" name="globalSettings" class="full-width" rows="30" readonly></textarea>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" id="save_unique_ads_txt_btn" name="save_ads_txt" class="btn btn-primary">Save</button>
-                    <button type="button" id="get_ads_txt" name="get_ads_txt" class="btn btn-primary">Get Ads.TXT</button>
-                    <button type="button" id="close_ads_txt_modal" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 
 <!-- DemandPartners Modal -->
@@ -394,7 +347,7 @@ $(document).ready(function() {
     });
 
     $(document).ready(function() {
-    // Handle edit button click
+    // edit modal
     $(document).on('click', '.edit-vendor-btn', function() {
         var id = $(this).data('id'); // Get the ID from the data attribute
     
@@ -499,13 +452,13 @@ $(document).ready(function() {
         });
     });
 });
-
+// edit modal
 
     // Show delete modal
     $(document).on('click', '.delete-vendor-btn', function() {
         var id = $(this).data('id');
         var name = $(this).data('name');
-        $('#delete-vendor-message').text(`Do you want to delete vendor ${name}?`);
+        $('#delete-vendor-message').text(`Do you want to delete ${name}?`);
         $('#delete-vendor-modal #delete-vendor-id').val(id);
         $('#delete-vendor-modal').modal('show');
     });
@@ -642,6 +595,7 @@ $(document).ready(function() {
         });
     });
 });
+
 // Show Website Modal
 $(document).on('click', '.Website-btn', function() {
     var Id = $(this).data('id');
