@@ -26,7 +26,7 @@ function mcm_module_init_menu_items() {
         $CI->app_menu->add_sidebar_menu_item('mcm', [
             'slug' => 'mcm',
             'name' => _l('mcm'),
-            'icon' => 'fa fa-users', 
+            'icon' => 'fa fa-area-chart',   
             'href' => admin_url('mcm/mcm_vendor'),
             'position' => 1,
         ]);
