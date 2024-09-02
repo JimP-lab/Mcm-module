@@ -127,16 +127,9 @@ class Mcm extends AdminController
             echo json_encode(['error' => 'Failed to update vendor information.']);
         }
     }
-
-
+  
     // Method for deleting vendor 
     public function delete($id) {
-        // Validate the ID
-        if (!$id) {
-            echo json_encode(['error' => 'Invalid vendor ID']);
-            return;
-        }
-    
         // Delete the record from the database
         $delete_status = $this->Edit_model->delete_record($id);
     
