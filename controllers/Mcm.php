@@ -27,9 +27,7 @@ class Mcm extends AdminController
     }
 
     // Method for inserting vendor
-    public function import_mcm_vendors() {
-        log_message('debug', 'Processing MCM vendors import');
-    
+   public function import_mcm_vendors() {
         // Retrieve data from POST request
         $postData = $this->input->post('data');
     
@@ -37,7 +35,7 @@ class Mcm extends AdminController
         if (is_array($postData) && !empty($postData)) {
             $successfulInserts = 0;
             $failedInserts = 0;
-
+    
             // Iterate over each entry in the post data
             foreach ($postData as $vendorData) {
                 // Use isset to check if the specific keys exist in the current vendor data
@@ -56,7 +54,7 @@ class Mcm extends AdminController
                     'Email' => $Email,
                 ];
     
-                // Call the model method to insert data
+                // calls the method of the model to insert the data into the database
                 $insert_id = $this->Mcm_model->insert_mcm_vendor($data);
                 if ($insert_id) {
                     $successfulInserts++;
@@ -65,22 +63,13 @@ class Mcm extends AdminController
                 }
             }
     
-            // Construct the message based on the result
-            if ($successfulInserts > 0) {
-                $message = "$successfulInserts vendors were added.";
+            // Print success or error message
+            if ($successfulInserts > 0 && $failedInserts == 0) {
+                echo "Vendors imported successfully.";
+            } elseif ($failedInserts > 0) {
+                echo "Error importing vendors.";
             }
-            if ($failedInserts > 0) {
-                $message .= ($successfulInserts > 0 ? " " : "") . "$failedInserts vendors weren't added.";
-            }
-        } else {
-            $message = 'Invalid data format.';
         }
-    
-        // Log the result
-        log_message('debug', $message);
-        
-        // Return or output the result message as needed
-        echo $message;
     }
 
     // Method for getting vendor
