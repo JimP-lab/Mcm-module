@@ -8,17 +8,12 @@ Author: Brainfoodmedia
 */
 define('mcm_MODULE_NAME', 'mcm');
 define('mcm_MODULE_PATH', 'modules/mcm/');
-
-
 mcm_module_activation_hook();
-    
 function mcm_module_activation_hook() {
     $CI = &get_instance();
  require_once(__DIR__ . '/install.php');
 }  
-
-hooks()->add_action('admin_init', 'mcm_module_init_menu_items');
-    
+hooks()->add_action('admin_init', 'mcm_module_init_menu_items'); 
 function mcm_module_init_menu_items() {
     $CI = &get_instance();
 
