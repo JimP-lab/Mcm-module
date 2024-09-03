@@ -1,7 +1,6 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 $CI = &get_instance();
-
 // Create the `ads_MCMVendor` table if it doesn't exist
 if (!$CI->db->table_exists(db_prefix() . 'ads_MCMVendor')) {
     $CI->db->query('CREATE TABLE `' . db_prefix() . "ads_MCMVendor` (
