@@ -10,24 +10,13 @@ class Mcm extends AdminController
         $this->load->model('Edit_model');
     }
 
-    public function Create()
-    {
-        if ($this->input->post()) {
-            $data = $this->input->post();
-            $this->Mcm_model->add($data);
-            redirect(admin_url('mcm/mcmCreateVendor'));
-        }
-        $this->load->view('Create');
-    }
-
     // Method for loading vendor
     public function mcm_vendor() {
-        log_message('debug','hello world');
-        $this->load->view('Vendors');
+    $this->load->view('Vendors');
     }
 
     // Method for inserting vendor
-   public function import_mcm_vendors() {
+    public function import_mcm_vendors() {
         // Retrieve data from POST request
         $postData = $this->input->post('data');
     
@@ -71,7 +60,7 @@ class Mcm extends AdminController
             }
         }
     }
-
+    
     // Method for getting vendor
     public function get_mcm_vendors()
     {
@@ -116,7 +105,8 @@ class Mcm extends AdminController
             echo json_encode(['error' => 'Failed to update vendor information.']);
         }
     }
-  
+
+
     // Method for deleting vendor 
     public function delete($id) {
         // Delete the record from the database
@@ -129,28 +119,28 @@ class Mcm extends AdminController
         }
     }
 
-    // Method for getting the status from the database 
-    public function get_status()
-    {
-        // Check if the request is an AJAX request
-        if ($this->input->is_ajax_request()) {
-            $id = $this->input->post('id');
-    
-            // Fetch the current status
-            $current_status = $this->Mcm_model->get_status($id);
-    
-            if ($current_status !== false) {
-                // Successfully retrieved the status
-                echo json_encode([
-                    'status' => $current_status,
-                    'success' => 'Status retrieved successfully.'
-                ]);
-            } else {
-                // Failed to retrieve the status
-                echo json_encode(['error' => 'Failed to retrieve status.']);
-            }
-        }
-    }
+       // Method for getting the status from the database 
+       public function get_status()
+       {
+           // Check if the request is an AJAX request
+           if ($this->input->is_ajax_request()) {
+               $id = $this->input->post('id');
+       
+               // Fetch the current status
+               $current_status = $this->Mcm_model->get_status($id);
+       
+               if ($current_status !== false) {
+                   // Successfully retrieved the status
+                   echo json_encode([
+                       'status' => $current_status,
+                       'success' => 'Status retrieved successfully.'
+                   ]);
+               } else {
+                   // Failed to retrieve the status
+                   echo json_encode(['error' => 'Failed to retrieve status.']);
+               }
+           }
+       }
 
     // // Method for updating status in database and in the ui 
     public function update_status() {
@@ -172,70 +162,67 @@ class Mcm extends AdminController
         }
     }
 
-
-     // Method for getting the partners from the database 
-     public function get_demand()
-     {
-         // Check if the request is an AJAX request
-         if ($this->input->is_ajax_request()) {
-             $id = $this->input->post('id');
-     
-             // Fetch the current status
-             $current_DemandPartners  = $this->Mcm_model->get_partners($id);
-     
-             if ($current_DemandPartners !== false) {
-                 // Successfully retrieved the status
-                 echo json_encode([
-                     'DemandPartners' => $current_DemandPartners,
-                     'success' => 'DemandPartners retrieved successfully.'
-                 ]);
-             } else {
-                 // Failed to retrieve the status
-                 echo json_encode(['error' => 'Failed to retrieve DemandPartners.']);
-             }
-         }
-     }
+    // Fetch site data and return as JSON
+ public function get_sites_ajax() {
+    $sites = $this->Mcm_model->get_sites();
+    echo json_encode($sites); 
+}
 
 
-    // Method for getting the partners from the database 
-    public function update_partners() {
-        $id = $this->input->post('id');
-        $demandPartners = $this->input->post('DemandPartners');
+// Method for saving the sites into database and in the ui 
+public function save_site_selection_to_db() {
+    $site_ids = $this->input->post('site_ids');
+    $id = $this->input->post('id'); // Get vendor ID from POST data
+
+    // Convert site_ids to a comma-separated string
+    $site_ids = implode(', ', $site_ids);
+
+    // Update the Site_name column in the ads_MCMVendor table
+    $this->db->where('id', $id);
+    $this->db->update('ads_MCMVendor', array('Site_id' => $site_ids));
+
+    echo json_encode(['status' => 'success']);
+}
+
+
+// Fetching all the  selected sites from the database into the ui  
+public function get_saved_sites_for_vendor() {
+    $id = $this->input->get('id'); // Get vendor ID from the AJAX request
+
+     // Get all available sites
+     $all_sites = $this->Mcm_model->get_sites();
+
+    // Get the saved site IDs for this vendor
+    $selected_sites = $this->Mcm_model->get_saved_sites($id);
+
+    // Return the data as a JSON response
+    echo json_encode([
+    'all_sites' => $all_sites,
+    'selected_sites' => $selected_sites // Array of selected site IDs
     
-        // Perform the update in your database
-        $success = $this->Mcm_model->update_partners($id, $demandPartners);
-    
-        if ($success) {
-            echo json_encode(['success' => 'DemandPartners updated successfully']);
-        } else {
-            echo json_encode(['error' => 'Failed to update DemandPartners.']);
-        }
-    }
+    ]);
+}
 
 
-    // Method for getting the Websites from the database 
-    public function get_websites() {
+// Fetch Partners data and return as JSON
+public function get_Partners_ajax() {
+    $Partners = $this->Mcm_model->get_Partners();
+    echo json_encode($Partners); 
+}
 
-        $websites = $this->Mcm_model->get_all_websites();
-    
-        if ($websites) {
-            echo json_encode(['websites' => $websites]);
-        } else {
-            echo json_encode(['error' => 'No websites found.']);
-        }
-    }
 
-    // Method for getting the updating from the database and in the ui  
-    public function update_website() {
-        $id = $this->input->post('id');
-        $site = $this->input->post('site');
-        $update = $this->Mcm_model->update_vendor_website($id, $site);
-    
-        if ($update) {
-            echo json_encode(['success' => 'Website updated succesfully']);
-        } else {
-            echo json_encode(['error' => 'Failed to update website.']);
-        }
-    }
+// Saving Partners inside database and ui  
+public function save_partner() {
+    $partner_ids = $this->input->post('partner_ids'); // Get partner IDs from POST data
+    $id = $this->input->post('id'); // Get vendor ID from POST data
+
+    // Convert partner_ids to a comma-separated string
+    $partner_ids_string = implode(', ', $partner_ids);
+
+    // Call the model to update the Partners selection in the database
+    $this->Mcm_model->update_Partners_selection($id, $partner_ids_string);
+
+    echo json_encode(['status' => 'success']);
+}
 }
 ?>
