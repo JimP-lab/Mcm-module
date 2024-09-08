@@ -1,7 +1,8 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 $CI = &get_instance();
-// Create the `ads_MCMVendor` table if it doesn't exist
+
+// Creating the ads_MCMVendor database 
 if (!$CI->db->table_exists(db_prefix() . 'ads_MCMVendor')) {
     $CI->db->query('CREATE TABLE `' . db_prefix() . "ads_MCMVendor` (
         `id` INT AUTO_INCREMENT,
@@ -10,12 +11,14 @@ if (!$CI->db->table_exists(db_prefix() . 'ads_MCMVendor')) {
         `Name` VARCHAR(255) NOT NULL,
         `Email` VARCHAR(255) NOT NULL,
         `Website` VARCHAR(255) NOT NULL,
-        `status` VARCHAR(50) IS NULL,
-        `DemandPartners` VARCHAR(255) NOT NULL,
+        Site_id   VARCHAR(255) NOT NULL,
+        Partner_id  VARCHAR(255) NOT NULL,
+        `Status` VARCHAR(255) NOT NULL,
         PRIMARY KEY (`id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=" . $CI->db->char_set . ';');
 } 
-// Table for verification 
+
+// Creating the ads_MCMVerification database 
 if (!$CI->db->table_exists(db_prefix() . 'ads_MCMVerification')) {
     $CI->db->query('CREATE TABLE `' . db_prefix() . "ads_MCMVerification` (
         `MCMVendorID` INT(11) NOT NULL AUTO_INCREMENT,
@@ -26,16 +29,16 @@ if (!$CI->db->table_exists(db_prefix() . 'ads_MCMVerification')) {
     ) ENGINE=InnoDB DEFAULT CHARSET=" . $CI->db->char_set . ';');
 }
 
-// Table for sites
+// Creating the ads_MCMSites database 
 if (!$CI->db->table_exists(db_prefix() . 'ads_MCMSites')) {
     $CI->db->query('CREATE TABLE `' . db_prefix() . "ads_MCMSites` (
-        `site_id` INT(11) NOT NULL AUTO_INCREMENT,
-        `site_name` VARCHAR(255) NOT NULL,
-        PRIMARY KEY (`site_id`)
+        `Site_id` INT(11) NOT NULL AUTO_INCREMENT,
+        `Site_name` VARCHAR(255) NOT NULL,
+        PRIMARY KEY (`Site_id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=" . $CI->db->char_set . ';');
 }
 
-// Table for status
+// Creating the ads_MCMStatus database 
 if (!$CI->db->table_exists(db_prefix() . 'ads_MCMStatus')) {
     $CI->db->query('CREATE TABLE `' . db_prefix() . "ads_MCMStatus` (
         `ID` INT(11) NOT NULL AUTO_INCREMENT,
