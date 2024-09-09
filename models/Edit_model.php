@@ -7,6 +7,7 @@ class Edit_model extends CI_Model
         parent::__construct();
         $this->load->database();
     }
+    
     // Method for getting the vendors by id
     public function get_records($id) {
         // Select the required columns
