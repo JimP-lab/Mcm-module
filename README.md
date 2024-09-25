@@ -2,9 +2,8 @@ Mcm is a management and tracking system that manages and stores vendors and auth
 
 Mcm is made by php and html and is based on the framework of perfex crm and codeigniter 3.
 
-Mcm was deployed in cleon server.
-here is cleon server: https://cleondev.brainfoodhosting.gr/admin/mcm/mcm_vendor
+Here is a video of how Mcm works 
+Here is the video: 
 
-
-https://github.com/user-attachments/assets/4f96a60a-fbbd-4758-b384-58806d496c88
+https://github.com/user-attachments/assets/60579c8a-921f-4711-8b66-fc9849261473
 
