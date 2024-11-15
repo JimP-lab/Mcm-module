@@ -33,7 +33,34 @@ class Mcm_model extends App_Model
         $this->db->limit($data['limit'], $data['offset']);
         $data = $this->db->get()->result_array(); 
         return ['data' => $data, 'total' => $num_rows];
-    }    
+    }
+    
+    // Method for getting vendors by id 
+    public function get_records($id) {
+        $this->db->select('Name, Email, Website, GoogleAdManagerID, Date');
+        $this->db->from('ads_MCMVendor');
+        $this->db->where('id', $id);
+        $query = $this->db->get();
+    
+        if ($query->num_rows() > 0) {
+     // Get the row data as an associative array add + return multiple data or values add this 
+        return $query->row_array();
+            } else {
+                return false;
+            }
+            }
+    
+        // Method for updating vendors by id and data 
+        public function update_record($id, $data) {
+            $this->db->where('id', $id);    
+            return $this->db->update('ads_MCMVendor', $data); 
+        }
+    
+        // Method for deleting vendors by id 
+        public function delete_record($id) {
+            $this->db->where('id', $id);
+            return $this->db->delete('ads_MCMVendor'); 
+        }
 
     // Method for transfering the wesbites from the ads_vendordb into ads_sites db / gettibg the id from name
     public function get_site_name_by_id($Site_id)
@@ -83,9 +110,8 @@ class Mcm_model extends App_Model
             return null;  // Return null if no record is found
         }
     }
-
-    // Get all sites all the sites from the database and return them in the ui as well 
-    public function get_sites() {
+     // Get all sites all the sites from the database and return them in the ui as well 
+     public function get_sites() {
         $this->db->select('site_id, site_name');
         $query = $this->db->get('tblads_MCMSites');
         return $query->result_array(); // Return the result as an array
