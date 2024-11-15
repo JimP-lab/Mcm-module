@@ -7,7 +7,6 @@ class Mcm extends AdminController
         parent::__construct();
         $this->load->model('Mcm_model');
         $this->load->library('form_validation');
-        $this->load->model('Edit_model');
     }
 
     // Method for loading vendor
@@ -72,7 +71,7 @@ class Mcm extends AdminController
     // Method for getting vendor from db by id / edit vendor/ 
     public function getData($id) { 
         // Fetch the record from the database based on the provided ID
-        $data = $this->Edit_model->get_records($id);
+        $data = $this->Mcm_model->get_records($id);
         // Check if data is retrieved
         if ($data) {
             // Send the data to AJAX in JSON format
@@ -97,7 +96,7 @@ class Mcm extends AdminController
         );
         
         // Perform the update in your database
-        $success = $this->Edit_model->update_record($id, $data);
+        $success = $this->Mcm_model->update_record($id, $data);
         
         if ($success) {
             echo json_encode(['success' => 'Vendor information updated successfully', 'data' => $data]);
@@ -110,7 +109,7 @@ class Mcm extends AdminController
     // Method for deleting vendor 
     public function delete($id) {
         // Delete the record from the database
-        $delete_status = $this->Edit_model->delete_record($id);
+        $delete_status = $this->Mcm_model->delete_record($id);
     
         if ($delete_status) {
             echo json_encode(['success' => 'Vendor deleted successfully']);
@@ -162,7 +161,7 @@ class Mcm extends AdminController
         }
     }
 
-    // Fetch site data and return as JSON
+     // Fetch site data and return as JSON
  public function get_sites_ajax() {
     $sites = $this->Mcm_model->get_sites();
     echo json_encode($sites); 
