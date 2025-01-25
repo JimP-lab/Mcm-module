@@ -1,4 +1,3 @@
-
 # Mcm Module
 
 Mcm  is a comprehensive management and tracking system designed to efficiently manage and store information on vendors and authors. Built with reliability and scalability in mind, Mcm leverages the power of PHP and HTML, and is based on the robust frameworks of Perfex CRM and CodeIgniter 3.
