@@ -9,4 +9,5 @@ Mcm (Management and Control Module) is a comprehensive management and tracking s
 - **User-Friendly Interface**: Enjoy a seamless and intuitive user interface designed for efficiency.
 
 ## How It Works:
-Watch this [video (https://github.com/user-attachments/assets/4cb773db-98b3-44c4-8461-ba8eb81f3322) to see Mcm in action and understand its full capabilities.
+
+https://github.com/user-attachments/assets/4cb773db-98b3-44c4-8461-ba8eb81f3322
